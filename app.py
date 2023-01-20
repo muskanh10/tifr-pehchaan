@@ -12,6 +12,7 @@ app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = 'templates'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+path = "abc"
 # app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///voice_features.db"
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # db = SQLAlchemy(app)
@@ -48,6 +49,7 @@ def record():
 @app.route('/save-record', methods=['POST'])
 def save_record():
     # check if the post request has the file part
+    print("in save record")
     if 'file' not in request.files:
         flash('No file part')
         return redirect(request.url)
@@ -61,26 +63,36 @@ def save_record():
     full_file_name = os.path.join(app.config['UPLOAD_FOLDER'], file_name)
     print(full_file_name)
     file.save(full_file_name)
-    path = "D:/" + UPLOAD_FOLDER + "/" + file_name
-    enroll(1,path)
-    return 'success'
+    global path
+    path = "D:/tifr pehchaan/" + UPLOAD_FOLDER + "/" + file_name
+    print(path)
+    #enroll(1,path)
+    return render_template('enroll.html')
 
 
 @app.route('/enroll')
-def speaker_verification():
+def speaker_enroll():
+    # render_template('record.html')
     # audio_encodings = dict()
     # audio_encodings[1] = sample_from_mfcc(read_mfcc("D:/tifr pehchaan/tifr-voice-dataset/22_muskan.wav", SAMPLE_RATE), NUM_FRAMES)
     # file = open('audio_encodings.dat', 'wb')
     # pickle.dump(audio_encodings, file)
     # file.close()
-    # enroll(2,"D:/tifr pehchaan/tifr-voice-dataset/muskan test.wav")
-    if validate(2,"D:/tifr pehchaan/tifr-voice-dataset/muskan-2.wav"):
-        print("muskiii")
+    enroll(2,path)
+    # if validate(2,"D:/tifr pehchaan/tifr-voice-dataset/muskan-2.wav"):
+    #     print("muskiii")
+    # else:
+    #     print("fake muski")
+
+    return "Enrolled!"
+
+
+@app.route('/validate')
+def speaker_verification():
+    if validate(2,"D:/tifr pehchaan/templates/muski.wav"):
+        return "muskiii"
     else:
-        print("fake muski")
-
-    return render_template('index.html')
-
+        return "fake muski"
 
 def enroll(id,audio):
     try:
