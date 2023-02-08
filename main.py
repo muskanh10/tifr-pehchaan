@@ -19,6 +19,7 @@ from speaker_verification.deep_speaker.audio import NUM_FRAMES, SAMPLE_RATE, rea
 admin_verified = False
 admin = "user"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+filename
 
 class Ui_MainWindow(object):
     def __init__(self):
@@ -114,7 +115,7 @@ class Ui_MainWindow(object):
         self.label.setText('REC')
 
     def play(self):
-        if len(self.audio) != 0:
+        try:
             # sd.play(data=self.audio, samplerate=self.sr, device=self.output_device['name'])
             # self.label.setText('PLAY')
             # save the file and then do it 
@@ -124,12 +125,12 @@ class Ui_MainWindow(object):
                     audio_encodings = pickle.load(f)
             except:
                 audio_encodings = {}
-            mfcc = sample_from_mfcc(read_mfcc("D:/tifr pehchaan/tifr-voice-dataset/shreya test.wav", SAMPLE_RATE), NUM_FRAMES)
+            mfcc = sample_from_mfcc(read_mfcc("D:/tifr pehchaan/"+file_name, SAMPLE_RATE), NUM_FRAMES)
             audio_encodings[1] = mfcc    
             with open(os.path.join(BASE_DIR, 'audio_encodings.dat'), 'wb') as f:
                 pickle.dump(audio_encodings, f)
             self.label.setText('Enrolled')
-        else:
+        except:
             self.label.setText('None')
 
     def stop(self):
@@ -137,8 +138,10 @@ class Ui_MainWindow(object):
         if self.status == 'rec':
             s_time = time.time() - self.time
             self.audio = self.audio[:int(round(s_time, 0)*self.sr)]
+            global file_name
             file_name = 'rec_audio'+str(self.save_num)+'.wav'
             wavfile.write(file_name, self.sr, self.audio)
+            print(file_name)
         # self.status = 'stop'
         try:
             with open(os.path.join(BASE_DIR, 'audio_encodings.dat'), 'rb') as f:
@@ -164,7 +167,23 @@ class Ui_MainWindow(object):
             self.label.setText(str(self.save_num)+'_SAVE')
         else:
             self.label.setText('None')
-
+    
+    #for esp32
+    '''w
+    def download(url, save_location):
+    try:
+        audio = requests.get(url)
+        with open(save_location, 'wb') as audio_file:
+            audio_file.write(audio.content)
+    except IOError as err:
+        print(err)
+        print("There was an error retrieving the data. Check your internet connection and try again.")
+        sys.exit(0)
+    except KeyboardInterrupt:
+        print("\n\nYou have interrupted an active download.\n Cleaning up fines now.")
+        os.remove(save_location)
+        sys.exit(1)
+    '''
 
 
 # app = QApplication(sys.argv)
