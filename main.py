@@ -19,7 +19,7 @@ from speaker_verification.deep_speaker.audio import NUM_FRAMES, SAMPLE_RATE, rea
 admin_verified = False
 admin = "user"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-filename
+filename = ""
 
 class Ui_MainWindow(object):
     def __init__(self):
@@ -148,7 +148,7 @@ class Ui_MainWindow(object):
                 audio_encodings = pickle.load(f)
         except:
             audio_encodings = {}
-        mfcc = audio_encodings[2]
+        mfcc = audio_encodings[1]
         score = run_user_evaluation(mfcc, file_name)
         result = round(score[0] * 100, 2)
         print(result)
@@ -180,7 +180,7 @@ class Ui_MainWindow(object):
         print("There was an error retrieving the data. Check your internet connection and try again.")
         sys.exit(0)
     except KeyboardInterrupt:
-        print("\n\nYou have interrupted an active download.\n Cleaning up fines now.")
+        print("\n\nYou have interrupted an active download.\n Cleaning up files now.")
         os.remove(save_location)
         sys.exit(1)
     '''
